@@ -1,10 +1,13 @@
 package com.example.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
 import com.example.exception.DuplicateUsernameException;
+import com.example.exception.InvalidCredentialsException;
 import com.example.exception.InvalidUsernameOrPasswordException;
 import com.example.repository.AccountRepository;
 
@@ -28,7 +31,10 @@ public class AccountService {
             throw new DuplicateUsernameException("Username already exists.");
         }
         Account newAccount = accountRepository.save(account);
-        System.out.println("new account " + newAccount);
         return newAccount;
+    }
+    public Account loginAccount(Account account) {
+        return accountRepository.findByUsernameAndPassword(account.getUsername(), account.getPassword())
+            .orElseThrow(() -> new InvalidCredentialsException("Account not found. Try again or register a new account."));
     }
 }
